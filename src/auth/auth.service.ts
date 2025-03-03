@@ -1,4 +1,4 @@
-import { ConflictException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, HttpStatus, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -13,6 +13,8 @@ import { ApiResponse } from 'src/types/ApiResponse';
 
 @Injectable()
 export class AuthService {
+    private readonly logger = new Logger(AuthService.name);
+
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
         private jwtService: JwtService,
@@ -36,6 +38,7 @@ export class AuthService {
             const { password: _, ...userWithoutPassword } = newUser.toJSON();
             return { data: userWithoutPassword, statusCode: HttpStatus.CREATED, message: "User registered successfully" };
         } catch (error) {
+            this.logger.error('Invalid data submitted!');
             return {
                 error: error.response.message,
                 statusCode: error.status,
@@ -68,6 +71,7 @@ export class AuthService {
             };
 
         } catch (error) {
+            this.logger.error('Invalid credentials submitted!');
             return {
                 error: error.response.message,
                 statusCode: error.response.statusCode,
