@@ -20,8 +20,8 @@ export class AuthController {
 
     @Post('login')
     async login(@Body() payload: LoginUserDto, @Res() res: Response) {
-        const result = this.authService.login(payload);
-        return res.send({ message: result })
+        const data = await this.authService.login(payload);
+        return res.send({ data })
     }
 
     @Post('logout')
