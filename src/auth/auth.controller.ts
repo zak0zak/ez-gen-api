@@ -14,30 +14,25 @@ export class AuthController {
     async register(@Body() payload: CreateUserDto, @Res() res: Response) {
         const data = await this.authService.register(payload);
 
-        res.status(data.statusCode);
-
         if (data.error)
             return res.send(data);
 
-        return res.send(data)
+        return res.status(data.statusCode).send(data)
     }
 
     @Post('login')
     async login(@Body() payload: LoginUserDto, @Res() res: Response) {
         const data = await this.authService.login(payload);
 
-        res.status(data.statusCode);
-
         if (data.error)
             return res.send(data);
 
-        return res.send({ access_token: data })
+        return res.status(data.statusCode).send({ access_token: data })
     }
 
     @Post('logout')
     logout(@Body() { token }: { token: string }, @Res() res: Response) {
         this.authService.logout(token);
-        res.status(200);
-        res.send({ message: 'Logged out successfully' });
+        res.status(200).send({ message: 'Logged out successfully' });
     }
 }
